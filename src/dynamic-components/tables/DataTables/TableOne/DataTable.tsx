@@ -41,6 +41,8 @@ interface DataTableProps<T> {
   onStatusFilterChange?: (value: string | null) => void;
   enableAddButton?: boolean;
   addFormRoute?: string | null;
+
+  customActions?: React.ReactNode;
 }
 
 export default function DataTable<T extends { id: string | number }>({
@@ -61,7 +63,8 @@ export default function DataTable<T extends { id: string | number }>({
   onStatusFilterChange,
 
   enableAddButton = false,
-  addFormRoute = null
+  addFormRoute = null,
+  customActions
 }: DataTableProps<T>) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -167,6 +170,8 @@ export default function DataTable<T extends { id: string | number }>({
           )}
 
           <Button variant="outline" size="sm" onClick={handleDownload}> Descargar </Button>
+
+          {customActions}
 
           {enableAddButton && (
             <Link
