@@ -3,18 +3,19 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
     try {
       const { to, content } = await req.json();
+      const url = `https://graph.facebook.com/${process.env.META_API_VERSION}/${process.env.META_PHONE_NUMBER_ID}/messages`;
   
-      const response = await fetch("https://conversations.messagebird.com/v1/send", {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `AccessKey ${process.env.MESSAGEBIRD_API_KEY}`,
+          "Authorization": `Bearer ${process.env.META_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          from: process.env.WHATSAPP_CHANNEL_ID,
+          messaging_product: "whatsapp",
           to,
           type: "text",
-          content: { text: content },
+          text: { body: content },
         }),
       });
   
