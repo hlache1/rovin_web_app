@@ -6,6 +6,7 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import Select from "../form/Select";
 
 class UserProps {
   id: string;
@@ -31,6 +32,7 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
   const [lastNameValue, setLastName] = useState(last_name || "");
   const [emailValue, setEmail] = useState(email || "");
   const [phoneValue, setPhone] = useState(phone || "");
+  const [countryCode, setCountryCode] = useState("+52");
 
   useEffect(() => {
     setFirstName(first_name || "");
@@ -42,12 +44,13 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
+    const formattedPhone = `${countryCode.slice(1)}1${phoneValue}`;
 
     await updateProfile(id, {
       first_name: firstNameValue,
       last_name: lastNameValue,
       email: emailValue,
-      phone: phoneValue,
+      phone: formattedPhone,
     });
 
     if (success) {
@@ -171,7 +174,21 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Número telefonico</Label>
-                    <Input type="text" defaultValue={phoneValue} onChange={(e) => setPhone(e.target.value)} />
+                    <div className="flex gap-1">
+                     <div className="basis-2/5">
+                      <Select
+                        onChange={(e) => setCountryCode(e)}
+                        defaultValue={countryCode}
+                        placeholder="País"
+                        options={
+                          [
+                            { value: "+52", label: "🇲🇽 (+52)" },
+                          ]
+                        }
+                        />
+                     </div>
+                    <Input className="basis-3/5" type="text" defaultValue={phoneValue} onChange={(e) => setPhone(e.target.value)} />
+                    </div>
                   </div>
 
                 </div>
