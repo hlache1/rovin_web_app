@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       form.append("description", body.description || "");
       form.append("retailer_id", retailerId);
       form.append("condition", "new");
-      form.append("price", parseInt(body.price).toString());
+      form.append("price", (parseInt(body.price) * 100).toString());
       form.append("currency", "MXN");
       form.append("availability", body.availability);
   
