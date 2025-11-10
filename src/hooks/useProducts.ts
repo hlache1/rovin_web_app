@@ -24,14 +24,14 @@ export function useProducts(page: number, rowsPerPage: number, search: string) {
 
       let base = supabase
         .from('products')
-        .select('id, name, stock, price, brand, category, status, created_at', { count: 'exact' })
+        .select('id, name, stock, price, brand, category, status, product_retailer_id, created_at', { count: 'exact' })
         .order('created_at', { ascending: false })
 
       if (search && search.trim().length > 0) {
         const s = `%${search.replace(/%/g, '\%')}%`;
         base = supabase
           .from('products')
-          .select('id, name, stock, price, brand, category, status, created_at', { count: 'exact' })
+          .select('id, name, stock, price, brand, category, status, product_retailer_id, created_at', { count: 'exact' })
           .or(`name.ilike.${s},brand.ilike.${s},category.ilike.${s}`)
           .order('created_at', { ascending: false })
       }
