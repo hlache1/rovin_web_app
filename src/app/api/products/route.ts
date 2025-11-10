@@ -43,7 +43,9 @@ export async function POST(req: Request) {
         .from("products")
         .insert({
           name: body.name,
+          description: body.description,
           brand: body.brand,
+          category: body.category,
           stock: body.stock,
           price: body.price,
           status: body.availability === "in stock" ? "Disponible" : "Agotado",

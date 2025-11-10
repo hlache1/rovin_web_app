@@ -13,6 +13,7 @@ export default function AddProductForm() {
   const [form, setForm] = useState({
     name: "",
     brand: "",
+    category: "",
     description: "",
     price: "",
     stock: "0",
@@ -53,6 +54,7 @@ export default function AddProductForm() {
     const resp = await addProduct({
       name: form.name,
       brand: form.brand,
+      category: form.category,
       description: form.description,
       price: Number(form.price),
       stock: Number(form.stock),
@@ -60,13 +62,11 @@ export default function AddProductForm() {
       image_url: form.image_url || undefined,
     });
   
-    if (resp) {
-      console.log("✅ Producto creado", resp);
-  
-      // Opcional: limpiar formulario
+    if (resp) {  
       setForm({
         name: "",
         brand: "",
+        category: "",
         description: "",
         price: "",
         stock: "0",
@@ -86,7 +86,7 @@ export default function AddProductForm() {
           </h2>
         </div>
         <div className="p-4 sm:p-6 dark:border-gray-800">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             <div>
               <Label>Nombre</Label>
               <Input
@@ -104,6 +104,16 @@ export default function AddProductForm() {
                 value={form.brand}
                 onChange={handleChange}
                 placeholder="Marca del producto"
+                required
+              />
+            </div>
+            <div>
+              <Label>Categoria</Label>
+              <Input
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                placeholder="Categoria del producto"
                 required
               />
             </div>
