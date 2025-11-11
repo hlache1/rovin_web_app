@@ -7,7 +7,6 @@ import { useSidebar } from "../context/SidebarContext";
 import {
   AiIcon,
   BoxCubeIcon,
-  CalenderIcon,
   CallIcon,
   CartIcon,
   ChatIcon,
@@ -15,16 +14,10 @@ import {
   GridIcon,
   GroupIcon,
   HorizontaLDots,
-  ListIcon,
   MailIcon,
-  PageIcon,
   PieChartIcon,
-  PlugInIcon,
-  TableIcon,
-  TaskIcon,
-  UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
