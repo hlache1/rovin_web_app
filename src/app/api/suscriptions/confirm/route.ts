@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Missing plan/userId metadata' }, { status: 400 })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     await supabase.from('users_mirror').update({ plan }).eq('id', userId)
 
     return NextResponse.json({ ok: true })

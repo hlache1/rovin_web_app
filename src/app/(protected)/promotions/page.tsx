@@ -51,7 +51,13 @@ export default function PromotionsPage() {
 
   const { createPromotion, loading: savingPromo } = useCreatePromotion();
 
-  function addCondition({ type, value, label }) {
+  function addCondition({ type, value, label }: 
+    {
+      type: string;
+      value: string | number;
+      label: string;
+    }
+  ) {
     setConditions((prev) => [
       ...prev,
       {
@@ -147,7 +153,7 @@ export default function PromotionsPage() {
                 <Label>Tipo de promoción</Label>
                 <Select
                   className="w-full border rounded px-3 py-2"
-                  value={promoType}
+                  defaultValue={promoType}
                   onChange={(e) => setPromoType(e)}
                   placeholder="Selecciona..."
                   options={

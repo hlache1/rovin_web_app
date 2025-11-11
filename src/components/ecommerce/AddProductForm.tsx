@@ -145,7 +145,7 @@ export default function AddProductForm() {
               <Input
                 name="price"
                 type="number"
-                step="0.01"
+                step={0.01}
                 value={form.price}
                 onChange={handleChange}
                 placeholder="Precio"

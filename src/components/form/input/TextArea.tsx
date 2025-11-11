@@ -9,6 +9,7 @@ interface TextareaProps {
   disabled?: boolean; // Disabled state
   error?: boolean; // Error state
   hint?: string; // Hint text to display
+  name?: string; // Name attribute
 }
 
 const TextArea: React.FC<TextareaProps> = ({
@@ -20,6 +21,7 @@ const TextArea: React.FC<TextareaProps> = ({
   disabled = false, // Disabled state
   error = false, // Error state
   hint = "", // Default hint text
+  name = "", // Name attribute
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
@@ -40,6 +42,7 @@ const TextArea: React.FC<TextareaProps> = ({
   return (
     <div className="relative">
       <textarea
+        name={name}
         placeholder={placeholder}
         rows={rows}
         value={value}

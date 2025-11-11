@@ -15,7 +15,7 @@ type OrderDetail = {
   quantity: number;
   unit_price: string | number;
   created_at?: string;
-  product?: Product | null; 
+  product?: Product | Product[] | null; 
 };
 
 type Order = {

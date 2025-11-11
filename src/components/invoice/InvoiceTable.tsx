@@ -10,7 +10,7 @@ type OrderDetail = {
   quantity: number;
   unit_price: string | number;
   created_at?: string;
-  product?: Product | null; 
+  product?: Product | Product[] | null; 
 };
 
 export default function InvoiceTable({ items }: { items?: OrderDetail[] | null }) {
@@ -38,7 +38,7 @@ export default function InvoiceTable({ items }: { items?: OrderDetail[] | null }
           )}
 
           {safeItems.map((item, idx) => {
-            const productName = item.product?.name ?? "(no product)";
+            const productName = Array.isArray(item.product) ? "(multiple products)" : (item.product?.name ?? "(no product)");
             const lineTotal = (Number(item.unit_price) || 0) * (Number(item.quantity) || 0);
             return (
               <tr key={item.id}>
