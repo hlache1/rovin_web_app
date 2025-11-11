@@ -1,7 +1,9 @@
 "use client";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useDebounce } from "@/hooks/useDebounce";
+import Button from "@/components/ui/button/Button";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComponentCard from "@/components/common/ComponentCard";
 import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable";
@@ -67,6 +69,11 @@ export default function ProductsPage() {
           onSearchChange={(v) => setSearchInput(v)}
           fileName="products"
           enableAddButton={true}
+          customActions={
+            <Link href="/promotions"> 
+              <Button variant="outline" size="sm"> Promociones </Button>
+            </Link>
+          }
         />
       </ComponentCard>
     </>
