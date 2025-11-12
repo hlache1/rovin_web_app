@@ -105,7 +105,7 @@ export function useConversation(userId: string | null, phone: string | null) {
             }
           )
           .subscribe();
-      } catch (err) {
+      } catch {
         setMessages([]);
         setConversationId(null);
       } finally {

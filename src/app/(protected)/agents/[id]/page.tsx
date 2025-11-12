@@ -1,15 +1,12 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import AgentChat from "@/dynamic-components/chat/AgentChat";
 import AgentForm from "@/dynamic-components/forms/AgentForm";
-import Button from "@/components/ui/button/Button";
-import { PaperPlaneIcon } from "@/icons";
 
 export default function AgentsPage() {
-    // const router = useRouter();
     const params = useParams();
     const id = params.id;
 

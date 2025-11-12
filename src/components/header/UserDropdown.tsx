@@ -12,6 +12,7 @@ import { useUser } from "@/hooks/useUser";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user, profile, organization, loading } = useUser();
   const router = useRouter();
 
@@ -45,10 +46,10 @@ export default function UserDropdown() {
 
   const displayEmail = user?.email ?? "No email";
 
-  const orgName =
-    organization?.[0]?.organization?.name ??
-    organization?.[0]?.organization_id ??
-    null;
+  // const orgName =
+  //   organization?.[0]?.organization?.name ??
+  //   organization?.[0]?.organization_id ??
+  //   null;
 
   return (
     <div className="relative">

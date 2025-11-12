@@ -74,6 +74,18 @@ export default function ChatBoxHeader({ contact, conversation_id, conversation_s
     setConfirming(false);
   }
 
+  if (loading) {
+    return (
+      <div className="sticky flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 xl:px-6">
+        <div className="flex items-center gap-3">
+          <h5 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Cargando...
+          </h5>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="sticky flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 xl:px-6">
       <div className="flex items-center gap-3">

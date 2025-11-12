@@ -17,9 +17,9 @@ import ComponentCard from "@/components/common/ComponentCard";
 
 export default function PromotionsPage() {
   const [currentPagePromos, setCurrentPagePromos] = useState(1);
-  const [rowsPerPagePromos, setRowsPerPagePromos] = useState(5);
-  const [currentPageProducts, setCurrentPageProducts] = useState(1);
-  const [rowsPerPageProducts, setRowsPerPageProducts] = useState(50);
+  const [rowsPerPagePromos] = useState(5);
+  const [currentPageProducts] = useState(1);
+  const [rowsPerPageProducts] = useState(50);
 
   const [promoName, setPromoName] = useState("");
   const [promoDescription, setPromoDescription] = useState("");
@@ -42,12 +42,12 @@ export default function PromotionsPage() {
 
   const {
     products, 
-    total: totalProducts, 
+    // total: totalProducts, 
     loading: loadingProducts 
   } = useProducts(
     currentPageProducts, rowsPerPageProducts, ""
   );
-  const totalPagesProducts = Math.ceil(totalProducts / rowsPerPageProducts);
+  // const totalPagesProducts = Math.ceil(totalProducts / rowsPerPageProducts);
 
   const { createPromotion, loading: savingPromo } = useCreatePromotion();
 
@@ -112,6 +112,10 @@ export default function PromotionsPage() {
       setPromoDescription(value);
     }
   };
+
+  if (loadingProducts) {
+    return <div>Cargando ...</div>;
+  }
 
   return (
     <>

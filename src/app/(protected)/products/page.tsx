@@ -20,11 +20,11 @@ export default function ProductsPage() {
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
     if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [total, rowsPerPage]);
+  }, [total, rowsPerPage, currentPage]);
 
   useEffect(() => {
     if (currentPage !== 1) setCurrentPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, currentPage]);
 
   const columns = [
     {

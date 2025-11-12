@@ -1,9 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { CheckLineIcon } from "../../icons";
-import { loadStripe } from "@stripe/stripe-js";
 import { supabase } from "@/lib/supabase/client";
-import { skip } from "node:test";
 
 const starterPack = [
   "100 creditos al mes",
@@ -66,6 +64,14 @@ export default function PriceTableOne() {
       window.location.href = data.url;
     }
     setLoading(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-48">
+        <span className="text-gray-500 dark:text-gray-400">Cargando...</span>
+      </div>
+    );
   }
 
   return (

@@ -65,11 +65,13 @@ export default function AiSidebarHistory({
 
   const handleRename = (itemId: string) => {
     // Handle rename logic here
+    console.log(itemId);
     handleDropdownClose();
   };
 
   const handleDelete = (itemId: string) => {
     // Handle delete logic here
+    console.log(itemId);
     handleDropdownClose();
   };
 

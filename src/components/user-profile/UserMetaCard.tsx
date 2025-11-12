@@ -20,6 +20,7 @@ class UserProps {
 }
 
 export default function UserMetaCard({ first_name, last_name, email }: UserProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here

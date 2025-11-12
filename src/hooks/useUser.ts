@@ -25,7 +25,7 @@ export function useUser() {
         if (error) throw error;
         if (!mounted) return;
         setUser(userData?.user ?? null);
-      } catch (err) {
+      } catch {
         if (mounted) setUser(null);
       } finally {
         if (mounted) setLoading(false);
@@ -80,7 +80,7 @@ export function useUser() {
 
         // if (orgError) throw orgError;
         // if (mounted) setOrganization(orgData ?? null);
-      } catch (err) {
+      } catch {
         if (mounted) {
           setProfile(null);
           setOrganization(null);

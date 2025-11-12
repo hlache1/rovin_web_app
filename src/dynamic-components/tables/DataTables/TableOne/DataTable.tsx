@@ -40,7 +40,7 @@ interface DataTableProps<T> {
   statusFilter?: string | null; // valor actual del filtro (ej: 'Customer' o null)
   onStatusFilterChange?: (value: string | null) => void;
   enableAddButton?: boolean;
-  addFormRoute?: string | null;
+  // addFormRoute?: string | null;
 
   customActions?: React.ReactNode;
 }
@@ -63,12 +63,12 @@ export default function DataTable<T extends { id: string | number }>({
   onStatusFilterChange,
 
   enableAddButton = false,
-  addFormRoute = null,
+  // addFormRoute = null,
   customActions
 }: DataTableProps<T>) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const startIndex = totalEntries === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+  // const startIndex = totalEntries === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
   const endIndex = totalEntries === 0 ? 0 : (currentPage - 1) * rowsPerPage + data.length;
 
   function toggleFilter() {
@@ -86,7 +86,7 @@ export default function DataTable<T extends { id: string | number }>({
   const handleDownload = () => {
     // 1. Preparamos los datos con las columnas visibles
     const exportData = data.map((row: any) => {
-      let obj: Record<string, any> = {};
+      const obj: Record<string, any> = {};
       columns.forEach((col) => {
         const key = col.key as string;
         obj[col.label] = row[key]; // usamos la label como encabezado

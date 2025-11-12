@@ -23,7 +23,7 @@ export default function SignUpForm() {
       setLoading(true);
       setError(null);
   
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -44,7 +44,7 @@ export default function SignUpForm() {
     setLoading(true);
     setError(null);
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -62,6 +62,10 @@ export default function SignUpForm() {
       return;
     }
     router.push("/dashboard");
+  }
+
+  if (error) {
+    alert("Ocurrió un error al intentar crear la cuenta");
   }
 
   return (

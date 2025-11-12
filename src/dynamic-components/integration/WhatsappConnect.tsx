@@ -36,7 +36,7 @@ export default function WhatsAppConnect() {
         } else {
           setStatus("disconnected");
         }
-      } catch (err) {
+      } catch {
         setStatus("disconnected");
       }
     })();
@@ -77,11 +77,11 @@ export default function WhatsAppConnect() {
               pollRef.current = null;
             }
           }
-        } catch (err) {
+        } catch {
           // ignora, seguirá intentando
         }
       }, 3000);
-    } catch (err) {
+    } catch {
       setLoadingSession(false);
     }
   };

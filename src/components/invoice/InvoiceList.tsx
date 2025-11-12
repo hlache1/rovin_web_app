@@ -93,7 +93,7 @@ export default function InvoiceListTable({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [filterStatus, setFilterStatus] = useState<"All" | "Unpaid" | "Draft" | "Paid">("All");
   const [search, setSearch] = useState<string>("");
-  const [showFilter, setShowFilter] = useState<boolean>(false);
+  // const [showFilter, setShowFilter] = useState<boolean>(false);
 
   // If fetchInvoices prop is provided, call it on mount and populate invoices
   useEffect(() => {

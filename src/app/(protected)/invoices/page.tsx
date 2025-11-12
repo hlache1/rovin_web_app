@@ -14,7 +14,6 @@ import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable
 
 export default function InvoicesPage() {
   const organizationId = null
-  // '0140c05e-fcc7-42cf-a9a4-e77b314c108d'
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -32,11 +31,11 @@ export default function InvoicesPage() {
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
     if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [total, rowsPerPage]);
+  }, [total, rowsPerPage, currentPage]);
 
   useEffect(() => {
     if (currentPage !== 1) setCurrentPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, currentPage]);
 
   const statusOptions = ["paid", "pending", "canceled"];
 

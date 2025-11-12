@@ -8,7 +8,7 @@ import Pagination from "@/dynamic-components/tables/DataTables/TableOne/Paginati
 
 export default function ChatPage() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage] = useState(5);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [selectedContact, setSelectedContact] = useState<any | null>(null);
 

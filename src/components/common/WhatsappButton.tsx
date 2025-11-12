@@ -3,7 +3,7 @@ import React from "react";
 
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
-import WhatsAppConnect from "@/dynamic-components/integration/WhatsappConnect";
+// import WhatsAppConnect from "@/dynamic-components/integration/WhatsappConnect";
 
 export const WhatsappButton: React.FC = () => {
   const { isOpen, openModal, closeModal } = useModal();
@@ -46,11 +46,11 @@ export const WhatsappButton: React.FC = () => {
     <Modal isOpen={isOpen} onClose={closeModal} className="max-w-lg mx-auto">
     <div className="grid grid-cols-[40%_60%] p-3">
       <div className="h-60 overflow-hidden rounded-2xl"> 
-        <img
+        {/* <img
           src="https://images.unsplash.com/photo-1636751364472-12bfad09b451?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1740"
           alt="WhatsApp Logo"
           className="w-full h-full object-cover opacity-90"
-        />
+        /> */}
       </div>
       <div className="p-4">
         <h2 className="mb-4 text-md font-medium dark:text-white/90">Conecta tu WhatsApp</h2>
