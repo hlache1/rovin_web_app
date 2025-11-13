@@ -9,10 +9,16 @@ export function useAddProduct() {
     setError(null);
 
     try {
+      const formData = new FormData();
+      Object.entries(productData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value as any);
+        }
+      });
+
       const resp = await fetch("/api/products", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(productData),
+        body: formData,
       });
 
       const json = await resp.json();

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Select from "../form/Select";
@@ -19,6 +20,7 @@ export default function AddProductForm() {
     stock: "0",
     availability: "",
     image_url: "",
+    image_file: null as File | null,
   });
 
   const availability = [
@@ -60,6 +62,7 @@ export default function AddProductForm() {
       stock: Number(form.stock),
       availability: form.availability as "in stock" | "out of stock",
       image_url: form.image_url || undefined,
+      image_file: form.image_file || undefined,
     });
   
     if (resp) {  
@@ -72,6 +75,7 @@ export default function AddProductForm() {
         stock: "0",
         availability: "",
         image_url: "",
+        image_file: null,
       });
     }
   };
@@ -183,7 +187,7 @@ export default function AddProductForm() {
             Imagen del producto
           </h2>
         </div>
-        <div className="p-4 sm:p-6">
+        {/* <div className="p-4 sm:p-6">
           <Label>Imagen</Label>
           <Input
             name="image_url"
@@ -191,9 +195,9 @@ export default function AddProductForm() {
             onChange={handleChange}
             placeholder="URL"
           />
-        </div>
+        </div> */}
 
-        {/* <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6">
           <label
             htmlFor="product-image"
             className="shadow-theme-xs group hover:border-brand-500 block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 transition dark:hover:border-brand-400 dark:border-gray-800"
@@ -219,15 +223,51 @@ export default function AddProductForm() {
                 </div>
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-medium text-gray-800 dark:text-white/90">
-                    Click to upload
+                    Agregar archivo
                   </span>
-                  or drag and drop SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  <br />
+                   Imagen PNG, JPG
                 </p>
               </div>
             </div>
-            <input type="file" id="product-image" className="hidden" />
+            <input 
+              type="file" 
+              id="product-image" 
+              accept="image/*"
+              disabled={!!form.image_file}
+              className="hidden" 
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setForm((prev) => ({ ...prev, image_file: file }));
+                }
+              }}
+            />
           </label>
-        </div> */}
+        </div>
+
+        {form.image_file && (
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <Image
+              src={URL.createObjectURL(form.image_file)}
+              alt="Vista previa"
+              height={50}
+              width={90}
+              className="rounded-lg object-cover"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setForm((prev) => ({ ...prev, image_file: null }))
+              }
+              className="mt-1 mb-3"
+            >
+              Cambiar imagen
+            </Button>
+          </div>
+        )}
 
       </div>
 
