@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useContacts } from "@/hooks/useContacts";
+import { useContactsWithSales } from "@/hooks/useContactsWithSales"; 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
 import Badge from "@/components/ui/badge/Badge";
@@ -8,7 +8,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable";
 
-export default function ContactsPage() {
+export default function ClientsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -18,7 +18,7 @@ export default function ContactsPage() {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const { user, loading: loadingUser } = useUser();
-  const { contacts, total, loading } = useContacts(user?.id ?? null, currentPage, rowsPerPage, debouncedSearch, statusFilter);
+  const { contacts, total, loading } = useContactsWithSales(user?.id ?? null, currentPage, rowsPerPage, debouncedSearch, statusFilter);
 
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
@@ -45,7 +45,7 @@ export default function ContactsPage() {
     {
       key: "email",
       label: "Email",
-      render: (item: any) => (item.email ? <p>{item.email}</p> : <p>None</p>),
+      render: (item: any) => (item.email ? <p>{item.email}</p> : <p>N/A</p>),
     },
     {
       key: "status",
@@ -66,14 +66,28 @@ export default function ContactsPage() {
         </Badge>
       ),
     },
+    { 
+      key: "total_spent", 
+      label: "Total gastado",
+      render: (item: any) => (
+        <p>${item.total_spent ? item.total_spent.toFixed(2) : "0.00"}</p>
+      ),
+    },
+    {
+      key: "last_purchase", 
+      label: "Última orden",
+      render: (item: any) => (
+        <p>{item.last_purchase ? new Date(item.last_purchase).toLocaleDateString() : "N/A"}</p>
+      ),
+    }
   ];
 
   if (loading || loadingUser) return <p>Loading...</p>;
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Contactos" />
-      <ComponentCard title="Contactos">
+      <PageBreadcrumb pageTitle="Clientes" />
+      <ComponentCard title="Clientes">
         <DataTable
           data={contacts}
           columns={columns}
@@ -84,7 +98,7 @@ export default function ContactsPage() {
           onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
           search={searchInput}
           onSearchChange={(v) => setSearchInput(v)}
-          fileName="contacts"
+          fileName="clients"
 
           enableStatusFilter={true}
           statusOptions={statusOptions}

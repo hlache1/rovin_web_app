@@ -52,8 +52,8 @@ const navItems: NavItem[] = [
   },
   {
     icon: <GroupIcon />,
-    name: "Contactos",
-    path: "/contacts",
+    name: "Clientes",
+    path: "/clients",
   },
   {
     icon: <ChatIcon />,
