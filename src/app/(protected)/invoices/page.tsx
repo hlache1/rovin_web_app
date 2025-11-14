@@ -63,7 +63,13 @@ export default function InvoicesPage() {
       item.status === "paid" ? "success" :
       item.status === "pending" ? "warning" :
       item.status === "canceled" ? "error" : "dark"
-    }>{item.status}</Badge> },
+    }>
+      {
+        item.status == "paid" ? "Pagado" :
+        item.status == "pending" ? "Pendiente" :
+        item.status == "canceled" ? "Cancelado" : item.status
+      }
+    </Badge> },
   ]
 
 
