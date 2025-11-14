@@ -6,6 +6,11 @@ type LeadStats = {
   status: string;
   current_count: number;
   previous_count: number;
+  total_orders: number;
+  total_sales: number;
+  orders_last_week: number;
+  orders_this_month: number;
+  orders_last_month: number;
 };
 
 export function useLeadsStats() {
