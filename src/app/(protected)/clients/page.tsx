@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useContactsWithSales } from "@/hooks/useContactsWithSales"; 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
+import Link from "next/link";
 import Badge from "@/components/ui/badge/Badge";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -36,9 +37,9 @@ export default function ClientsPage() {
       key: "name",
       label: "Nombre",
       render: (item: any) => (
-        <div>
+        <Link href={`/clients/${item.id}`} className="text-gray-500 hover:underline" >
           <p className="font-medium">{item.name}</p>
-        </div>
+        </Link>
       ),
     },
     { key: "phone_number", label: "Número telefonico" },
