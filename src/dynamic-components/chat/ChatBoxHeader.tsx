@@ -4,6 +4,7 @@ import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "@/icons";
 import { useUpdateContactStatus } from "@/hooks/useUpdateContactStatus";
+import { LEAD_STATUSES } from "@/utils/statuses";
 import { supabase } from "@/lib/supabase/client";
 
 interface ChatBoxHeaderProps {
@@ -25,12 +26,7 @@ export default function ChatBoxHeader({ contact, conversation_id, conversation_s
 
   const { updateStatus, loading } = useUpdateContactStatus();
 
-  const status_filters = [
-    { label: "Lead generado", emoji: "🆕" },
-    { label: "Lead activo", emoji: "🔥" },
-    { label: "Lead ganado", emoji: "👤" },
-    { label: "Lead inactivo", emoji: "❄️" },
-  ];
+  const status_filters = LEAD_STATUSES;
 
   useEffect(() => {
     setLocalStatus(contact?.status || "");

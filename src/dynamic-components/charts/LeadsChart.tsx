@@ -3,6 +3,7 @@ import React from "react";
 
 import { ApexOptions } from "apexcharts";
 import { useContactsByMonth } from "@/hooks/useLeadsYearStats";
+import { LEAD_STATUSES } from "@/utils/statuses";
 
 import dynamic from "next/dynamic";
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
@@ -15,19 +16,27 @@ export default function LeadsChart() {
 
   if (loading) return <p>Cargando...</p>;
 
-  const statuses = ["Lead generado", "Lead inactivo", "Lead activo", "Lead ganado"];
+  const statuses = LEAD_STATUSES.map(s => ({
+    key: s.key,
+    label: s.label,
+  }));
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const series = statuses.map((status) => ({
-    name: status,
+    name: status.label,
     data: months.map((month) => {
-      const record = data.find((d) => d.status === status && d.month === month);
+      const record = data.find((d) => d.status === status.key && d.month === month);
       return record ? record.count : 0;
     }),
   }));
 
   const options: ApexOptions = {
-    colors: ["#858AE3", "#DDFDFE",  "#3152F5", "#3C4857"],
+    colors: [
+      "#3152F5", 
+      // "#3C4857",
+      "#F04E3D",
+      "#DDFDFE",  
+    ],
     legend: {
       show: true,
       position: "top",

@@ -5,18 +5,12 @@ import Badge from "@/components/ui/badge/Badge";
 import LeadsChart from "@/dynamic-components/charts/LeadsChart";
 import { ArrowDownIcon, ArrowUpIcon } from "@/icons";
 import { useLeadsStats } from "@/hooks/useLeadsStats";
+import { LEAD_STATUSES } from "@/utils/statuses";
 
 export default function DashboardPage() {
   const { stats, loading } = useLeadsStats();
 
   if (loading) return <p>Loading...</p>;
-
-  const pluralStatusMap: Record<string, string> = {
-    "Lead generado": "Leads generados",
-    "Lead inactivo": "Leads inactivos",
-    "Lead activo": "Leads activos",
-    "Lead ganado": "Leads ganados"
-  };
 
   return (
     <main className="">
@@ -38,17 +32,14 @@ export default function DashboardPage() {
                 <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
                   <div className="flex items-center justify-start bg-none">
                     <span className="text-2xl">
-                        {item.status === "Lead generado" && "🆕"}
-                        {item.status === "Lead inactivo" && "❄️"}
-                        {item.status === "Lead activo" && "🔥"}
-                        {item.status === "Lead ganado" && "👤"} 
+                        {LEAD_STATUSES.find(s => s.key === item.status)?.emoji}
                     </span>
                   </div>
 
                   <div className="flex items-end justify-between mt-4 overflow-hidden">
                     <div className="min-w-0">
                     <span className="text-md text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {pluralStatusMap[item.status] ?? item.status}
+                      {LEAD_STATUSES.find(s => s.key === item.status) ? ` ${LEAD_STATUSES.find(s => s.key === item.status)?.plural}` : ''}
                     </span>
                       <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
                         {item.current_count}

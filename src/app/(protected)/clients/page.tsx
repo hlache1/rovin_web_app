@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useContactsWithSales } from "@/hooks/useContactsWithSales"; 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
+import { LEAD_STATUSES } from "@/utils/statuses";
 import Link from "next/link";
 import Badge from "@/components/ui/badge/Badge";
 import ComponentCard from "@/components/common/ComponentCard";
@@ -30,7 +31,7 @@ export default function ClientsPage() {
     if (currentPage !== 1) setCurrentPage(1);
   }, [debouncedSearch, currentPage]);
 
-  const statusOptions = ["Lead generado", "Lead ganado", "Lead activo", "Lead inactivo"];
+  const statusOptions = LEAD_STATUSES.map(s => s.key);
 
   const columns = [
     {
@@ -54,13 +55,7 @@ export default function ClientsPage() {
       render: (item: any) => (
         <Badge
           size="sm"
-          color={
-            item.status === "Lead inactivo" ? "primary" :
-            item.status === "Lead generado" ? "dark" : 
-            item.status === "Lead activo" ? "warning" :
-            item.status === "Lead ganado" ? "success"
-            : "error"
-          }
+          color={LEAD_STATUSES.find(s => s.key === item.status)?.badgeColor || "error"}
           variant="light"
         >
           {item.status}

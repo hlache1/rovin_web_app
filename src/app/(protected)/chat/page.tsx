@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useConversation } from "@/hooks/useConversation";
 import { useUser } from "@/hooks/useUser";
 import { useContacts } from "@/hooks/useContacts";
+import { LEAD_STATUSES_WITH_ALL } from "@/utils/statuses";
 import ChatBox from "@/dynamic-components/chat/ChatBox";
 import Pagination from "@/dynamic-components/tables/DataTables/TableOne/Pagination";
 
@@ -24,15 +25,9 @@ export default function ChatPage() {
     const { messages, loading: loadingMessages, conversationId, conversationStatus } = useConversation(
       user?.id ?? null,
       selectedContact?.phone_number ?? null
-    );    
+    );  
     
-    const filters = [
-      { label: "Todos", emoji: "📋" },
-      { label: "Lead generado", emoji: "🆕" },
-      { label: "Lead activo", emoji: "🔥" },
-      { label: "Lead ganado", emoji: "👤" },
-      { label: "Lead inactivo", emoji: "❄️" },
-    ];
+    const filters = LEAD_STATUSES_WITH_ALL
 
     if (loadingUser) return <div>Loading...</div>;
 
@@ -43,7 +38,7 @@ export default function ChatPage() {
             {filters.map((f) => (
               <button
                 key={f.label}
-                onClick={() => setStatusFilter(f.label === "Todos" ? null : f.label)}
+                onClick={() => setStatusFilter(f.label === "Todos" ? null : f.key)}
                 className={`flex flex-col items-center md:items-start w-full md:w-auto px-2 py-1 rounded-md text-sm md:text-base ${
                   statusFilter === f.label || (f.label === "Todos" && !statusFilter)
                     ? "bg-blue-500 text-white"
@@ -77,7 +72,9 @@ export default function ChatPage() {
                     >
                         <div className="font-medium">{c.name}</div>
                         <div className="text-sm text-gray-500 truncate">{c.phone_number}</div>
-                        <div className="text-xs text-gray-400">{c.status}</div>
+                        <div className="text-xs text-gray-400">
+                          {c.status && `${LEAD_STATUSES_WITH_ALL.find(status => status.key === c.status)?.label}`}
+                          </div>
                     </li>
                     ))}
                 </ul>
