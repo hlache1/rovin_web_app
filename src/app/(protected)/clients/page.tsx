@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useContactsWithSales } from "@/hooks/useContactsWithSales"; 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
-import { LEAD_STATUSES } from "@/utils/statuses";
+import { LEAD_STATUSES, LeadStatusKey } from "@/utils/statuses";
 import Link from "next/link";
 import Badge from "@/components/ui/badge/Badge";
 import ComponentCard from "@/components/common/ComponentCard";
@@ -11,16 +12,27 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable";
 
 export default function ClientsPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebounce(searchInput, 500);
 
+  const statusOptions = LEAD_STATUSES.map(s => s.key);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const { user, loading: loadingUser } = useUser();
   const { contacts, total, loading } = useContactsWithSales(user?.id ?? null, currentPage, rowsPerPage, debouncedSearch, statusFilter);
+
+  useEffect(() => {
+    const statusFromURL = searchParams.get("status") as LeadStatusKey; 
+    if (statusFromURL && statusOptions.includes(statusFromURL)) {
+      setStatusFilter(statusFromURL);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
@@ -31,7 +43,6 @@ export default function ClientsPage() {
     if (currentPage !== 1) setCurrentPage(1);
   }, [debouncedSearch, currentPage]);
 
-  const statusOptions = LEAD_STATUSES.map(s => s.key);
 
   const columns = [
     {
@@ -80,6 +91,20 @@ export default function ClientsPage() {
 
   if (loading || loadingUser) return <p>Loading...</p>;
 
+  const handleStatusChange = (newStatus: string | null) => {
+    setStatusFilter(newStatus);
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (newStatus) {
+      params.set("status", newStatus);
+    } else {
+      params.delete("status");
+    }
+
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <>
       <PageBreadcrumb pageTitle="Clientes" />
@@ -99,7 +124,8 @@ export default function ClientsPage() {
           enableStatusFilter={true}
           statusOptions={statusOptions}
           statusFilter={statusFilter}
-          onStatusFilterChange={(v) => setStatusFilter(v)}
+          // onStatusFilterChange={(v) => setStatusFilter(v)}
+          onStatusFilterChange={handleStatusChange}
         />
       </ComponentCard>
     </>

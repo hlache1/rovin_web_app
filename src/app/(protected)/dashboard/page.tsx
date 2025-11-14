@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link";
 import React from "react";
 import Badge from "@/components/ui/badge/Badge";
 import LeadsChart from "@/dynamic-components/charts/LeadsChart";
@@ -33,6 +34,7 @@ export default function DashboardPage() {
             return (
               <div key={item.status} className="col-span-1 sm:col-span-2 lg:col-span-2">
                 {/* Card */}
+                <Link href={`/clients?status=${item.status}`}>
                 <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
 
                   {/* Header */}
@@ -89,6 +91,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
+                </Link>
               </div>
             );
           })}
