@@ -34,13 +34,16 @@ interface DataTableProps<T> {
   onSearchChange: (value: string) => void;
   fileName?: string;
 
-  // nuevo: control de filtro de status
   enableStatusFilter?: boolean; // si true mostramos el botón que abre el dropdown
   statusOptions?: string[]; // lista de statuses a mostrar en el dropdown
   statusFilter?: string | null; // valor actual del filtro (ej: 'Customer' o null)
   onStatusFilterChange?: (value: string | null) => void;
   enableAddButton?: boolean;
-  // addFormRoute?: string | null;
+
+  selectable?: boolean; // habilita checkboxes
+  selectedRows?: (string | number)[];
+  onSelectionChange?: (ids: (string | number)[]) => void;
+  selectionActions?: (selected: any[]) => React.ReactNode;
 
   customActions?: React.ReactNode;
 }
@@ -62,8 +65,12 @@ export default function DataTable<T extends { id: string | number }>({
   statusFilter = null,
   onStatusFilterChange,
 
+  selectable = false,
+  selectedRows = [],
+  onSelectionChange,
+  selectionActions,
+
   enableAddButton = false,
-  // addFormRoute = null,
   customActions
 }: DataTableProps<T>) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -173,6 +180,10 @@ export default function DataTable<T extends { id: string | number }>({
 
           {customActions}
 
+          {selectionActions && selectable &&
+            selectionActions(data.filter(d => selectedRows?.includes(d.id)))
+          }
+
           {enableAddButton && (
             <Link
               href="/add-product"
@@ -189,6 +200,22 @@ export default function DataTable<T extends { id: string | number }>({
         <Table>
           <TableHeader>
             <TableRow>
+              {selectable && (
+                <TableCell isHeader className="px-2 py-3 border border-gray-100 dark:border-white/[0.05]">
+                  <input
+                    type="checkbox"
+                    checked={data.length > 0 && selectedRows?.length === data.length}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onSelectionChange?.(data.map((d) => d.id));
+                      } else {
+                        onSelectionChange?.([]);
+                      }
+                    }}
+                  />
+                </TableCell>
+              )}
+
               {columns.map((col) => (
                 <TableCell key={String(col.key)} isHeader className="px-4 py-3 border border-gray-100 dark:border-white/[0.05]">
                   <span className="font-medium text-gray-700 dark:text-gray-400">{col.label}</span>
@@ -198,15 +225,36 @@ export default function DataTable<T extends { id: string | number }>({
           </TableHeader>
 
           <TableBody>
-            {data.map((item) => (
+            {data.map((item) => {
+              const isSelected = selectedRows?.includes(item.id);
+              return (
               <TableRow key={item.id}>
+                {selectable && (
+                  <TableCell className="px-4 py-3 border border-gray-100 dark:border-white/[0.05]">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          onSelectionChange?.([...(selectedRows ?? []), item.id]);
+                        } else {
+                          onSelectionChange?.(
+                            (selectedRows ?? []).filter((id) => id !== item.id)
+                          );
+                        }
+                      }}
+                    />
+                  </TableCell>
+                )}
+
                 {columns.map((col) => (
                   <TableCell key={String(col.key)} className="px-4 py-4 border border-gray-100 dark:border-white/[0.05] text-gray-800 dark:text-white/90 text-sm">
                     {col.render ? col.render(item) : (item[col.key] as any)}
                   </TableCell>
                 ))}
               </TableRow>
-            ))}
+              )
+            })} 
           </TableBody>
         </Table>
       </div>

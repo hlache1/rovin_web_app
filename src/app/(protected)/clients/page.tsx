@@ -2,16 +2,22 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useContactsWithSales } from "@/hooks/useContactsWithSales"; 
+import { useSendBulkMessages } from "@/hooks/useSendBulkMessages";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
+import { useModal } from "@/hooks/useModal";
 import { LEAD_STATUSES, LeadStatusKey } from "@/utils/statuses";
 import Link from "next/link";
+import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
+import { Modal } from "@/components/ui/modal";
+import { PaperPlaneIcon } from "@/icons";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable";
 
 export default function ClientsPage() {
+  const { isOpen, openModal, closeModal } = useModal();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -19,6 +25,7 @@ export default function ClientsPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [searchInput, setSearchInput] = useState("");
+  const [messageInput, setmessageInput] = useState("");
   const debouncedSearch = useDebounce(searchInput, 500);
 
   const statusOptions = LEAD_STATUSES.map(s => s.key);
@@ -26,6 +33,9 @@ export default function ClientsPage() {
 
   const { user, loading: loadingUser } = useUser();
   const { contacts, total, loading } = useContactsWithSales(user?.id ?? null, currentPage, rowsPerPage, debouncedSearch, statusFilter);
+  const { sendBulk, loading: loadingMessages } = useSendBulkMessages();
+
+  const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
 
   useEffect(() => {
     const statusFromURL = searchParams.get("status") as LeadStatusKey; 
@@ -89,7 +99,7 @@ export default function ClientsPage() {
     }
   ];
 
-  if (loading || loadingUser) return <p>Loading...</p>;
+  if (loading || loadingUser || loadingMessages) return <p>Loading...</p>;
 
   const handleStatusChange = (newStatus: string | null) => {
     setStatusFilter(newStatus);
@@ -103,6 +113,17 @@ export default function ClientsPage() {
     }
 
     router.push(`?${params.toString()}`);
+  };
+
+  const handleSendMessage = async () => {
+    const numbers = selectedContacts.map(c => c.phone_number);
+    
+    if (numbers.length === 0) return;
+    if (messageInput.trim() === "") return;
+    
+    await sendBulk(numbers, messageInput);
+    setmessageInput("");
+    closeModal();
   };
 
   return (
@@ -124,10 +145,59 @@ export default function ClientsPage() {
           enableStatusFilter={true}
           statusOptions={statusOptions}
           statusFilter={statusFilter}
-          // onStatusFilterChange={(v) => setStatusFilter(v)}
           onStatusFilterChange={handleStatusChange}
+
+          selectable={true}
+          selectedRows={selectedContacts.map(c => c.id)}
+          onSelectionChange={(ids) => {
+            const fullObjects = contacts.filter(c => ids.includes(c.id));
+            setSelectedContacts(fullObjects);
+          }}
+          selectionActions={(selected) => (
+            <Button disabled={selected.length === 0} size="sm" onClick={openModal}>
+              Enviar mensaje
+            </Button>
+          )}
         />
       </ComponentCard>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={closeModal}
+        className="max-w-[500px] w-full m-4 p-6 rounded-xl bg-white dark:bg-gray-900"
+      >
+        <div className="flex flex-col items-center gap-4 text-center w-full mt-2">
+          
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200">
+            Enviar mensaje
+          </h2>
+
+          <input
+            className="
+              w-full rounded-lg border border-gray-300 dark:border-gray-700 mt-2
+              bg-transparent px-4 py-2
+              text-gray-800 dark:text-gray-200
+              focus:outline-none focus:ring focus:ring-blue-500/30
+            "
+            placeholder="Escribe un mensaje..."
+            value={messageInput}
+            onChange={(e) => setmessageInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            disabled={loading}
+          />
+
+          <Button
+            size="sm"
+            onClick={handleSendMessage}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <PaperPlaneIcon />
+            {loading ? "Enviando..." : "Enviar"}
+          </Button>
+
+        </div>
+      </Modal>
     </>
   );
 }
