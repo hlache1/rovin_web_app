@@ -40,8 +40,8 @@ export default function ClientsPage() {
   }, [total, rowsPerPage, currentPage]);
 
   useEffect(() => {
-    if (currentPage !== 1) setCurrentPage(1);
-  }, [debouncedSearch, currentPage]);
+    setCurrentPage(1);
+  }, [debouncedSearch, statusFilter]);
 
 
   const columns = [
