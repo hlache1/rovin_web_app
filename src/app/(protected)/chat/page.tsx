@@ -14,7 +14,7 @@ export default function ChatPage() {
     const [selectedContact, setSelectedContact] = useState<any | null>(null);
 
     const { user, loading: loadingUser } = useUser();
-    const { contacts, loading: loadingContacts } = useContacts(
+    const { contacts, total, loading: loadingContacts } = useContacts(
       user?.id ?? null,
       currentPage,
       rowsPerPage,
@@ -83,7 +83,7 @@ export default function ChatPage() {
                 <div className="mt-2">
                     <Pagination
                     currentPage={currentPage}
-                    totalPages={Math.ceil((contacts?.length || 0) / rowsPerPage)}
+                    totalPages={Math.max(1, Math.ceil(total / rowsPerPage))}
                     onPageChange={(page) => setCurrentPage(page)}
                     />
                 </div>
