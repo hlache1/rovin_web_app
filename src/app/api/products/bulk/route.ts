@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     const file = formData.get("file") as File;
     if (!file) throw new Error("No file was found");
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer: any = Buffer.from(await file.arrayBuffer());
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(buffer);
 
@@ -104,9 +104,10 @@ export async function POST(req: Request) {
         image_url: extractCellValue(row.getCell(8).value),
       };
 
-      Object.keys(product).forEach((k) => {
-        if (typeof product[k] === "string") {
-          product[k] = product[k].trim();
+      const p: Record<string, any> = product;
+      Object.keys(p).forEach((k) => {
+        if (typeof p[k] === "string") {
+          p[k] = p[k].trim();
         }
       });
 
