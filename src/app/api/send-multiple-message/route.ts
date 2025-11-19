@@ -4,8 +4,6 @@ export async function POST(req: Request) {
   try {
     const { to, content } = await req.json();
 
-    console.log("Enviando mensaje a múltiples números:", to);
-
     if (!Array.isArray(to)) {
       throw new Error(`'to' debe ser un array de números.`);
     }
@@ -35,8 +33,6 @@ export async function POST(req: Request) {
     });
 
     const results = await Promise.all(tasks);
-
-    console.log("Resultados del envío masivo:", results);
 
     return NextResponse.json({
       success: true,
