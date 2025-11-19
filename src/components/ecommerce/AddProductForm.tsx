@@ -6,9 +6,13 @@ import Input from "../form/input/InputField";
 import Select from "../form/Select";
 import TextArea from "../form/input/TextArea";
 import Button from "../ui/button/Button";
+import { DownloadIcon } from "@/icons";
 import { useAddProduct } from "@/hooks/useAddProduct";
+import { useBulkProductUpload } from "@/hooks/useBulkProductUpload";
+
 
 export default function AddProductForm() {
+  const { uploadExcel } = useBulkProductUpload();
   const { addProduct, loading, error } = useAddProduct();
 
   const [form, setForm] = useState({
@@ -47,11 +51,6 @@ export default function AddProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (!form.availability) {
-    //   alert("Debes seleccionar la disponibilidad");
-    //   return;
-    // }
-  
     // Llamar al hook
     const resp = await addProduct({
       name: form.name,
@@ -80,7 +79,43 @@ export default function AddProductForm() {
     }
   };
 
+  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const resp = await uploadExcel(file);
+    if (resp) alert(`✅ Se agregaron: ${resp.count} nuevo(s) producto(s).`);
+  };
+
   return (
+    <>
+    {/* Bulk Upload */}
+    <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6 mt-6 mb-6">
+      <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+        Agregar múltiples productos
+      </h2>
+
+      <div className="mt-4 flex flex-col gap-3">
+        <a
+          href="/api/products/template"
+          download
+        >
+          <Button variant="outline" size="sm">
+            <DownloadIcon/>
+            Descargar plantilla
+          </Button>
+        </a>
+
+        <input
+          type="file"
+          accept=".xlsx, .xls"
+          onChange={(e) => handleExcelUpload(e)}
+          className="border border-gray-300 p-2 rounded-lg"
+          name="excel_file"
+        />
+      </div>
+    </div>
+
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Product Description */}
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
@@ -280,5 +315,6 @@ export default function AddProductForm() {
 
       {error && <p className="text-red-500">{error}</p>}
     </form>
+    </>
   );
 }
