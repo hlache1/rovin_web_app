@@ -18,7 +18,7 @@ import DataTable from "@/dynamic-components/tables/DataTables/TableOne/DataTable
 
 export default function ClientsPage() {
   const { isOpen, openModal, closeModal } = useModal();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);

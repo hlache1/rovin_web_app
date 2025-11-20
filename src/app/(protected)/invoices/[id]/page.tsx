@@ -8,8 +8,8 @@ import InvoiceMain from "@/components/invoice/InvoiceMain";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
 export default function InvoiceDetailPage() {
-    const params = useParams();
-    const orderId = Array.isArray(params.id) ? params.id[0] : params.id;
+    const params = useParams<{ id: string | string[] }>();
+    const orderId = params ? (Array.isArray(params.id) ? params.id[0] : params.id) : "";
 
     const { order, loading } = useOrderDetails(orderId);
 

@@ -16,7 +16,7 @@ export default function SignInForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const params = useSearchParams()
+  const params = useSearchParams()!
 
   const next = params.get('next') || '/dashboard'
 

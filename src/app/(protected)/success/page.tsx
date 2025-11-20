@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function Success() {
   const router = useRouter();
-  const params = useSearchParams();
+  const params = useSearchParams()!;
   const sessionId = params.get("session_id");
 
   useEffect(() => {

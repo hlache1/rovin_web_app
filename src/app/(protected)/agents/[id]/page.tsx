@@ -8,7 +8,7 @@ import AgentForm from "@/dynamic-components/forms/AgentForm";
 
 export default function AgentsPage() {
     const params = useParams();
-    const id = params.id;
+    const id = params?.id ?? "";
 
     const agents = [
       {

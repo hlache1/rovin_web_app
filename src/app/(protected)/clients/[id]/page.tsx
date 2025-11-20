@@ -8,7 +8,7 @@ import { useClientOrders } from "@/hooks/useClientOrders";
 
 export default function ClientOrdersPage() {
     const params = useParams();
-    const id = params.id;
+    const id = params?.id ?? "";
 
     const { orders, loading, error } = useClientOrders(id as string);
 
