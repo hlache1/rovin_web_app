@@ -15,6 +15,10 @@ export async function GET(req: Request) {
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId)
+    if (!session) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    }
+
     const plan = session.metadata?.plan
     const userId = session.metadata?.userId
 
@@ -23,7 +27,11 @@ export async function GET(req: Request) {
     }
 
     const supabase = await createClient()
-    await supabase.from('users_mirror').update({ plan }).eq('id', userId)
+    const { error } = await supabase.from('users_mirror').update({ plan }).eq('id', userId)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err: any) {

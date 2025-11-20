@@ -1,64 +1,75 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  
+  const res = NextResponse.next();
+  const pathname = req.nextUrl.pathname;
+
+  const PUBLIC_API_ROUTES = [
+    "/api/checkout",
+    "/api/subscriptions/confirm",
+  ];
+
+  if (PUBLIC_API_ROUTES.includes(pathname)) {
+    return res;
+  }
+
+  const PUBLIC_ROUTES = [
+    "/signin",
+    "/register",
+    "/success", 
+  ];
+
+  if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
+    return res;
+  }
+
+  // --- Auth ---
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         get(name: string) {
-          return req.cookies.get(name)?.value
+          return req.cookies.get(name)?.value;
         },
         set(name: string, value: string, options?: any) {
-          res.cookies.set(name, value, options)
+          res.cookies.set(name, value, options);
         },
         remove(name: string) {
-          res.cookies.delete(name)
+          res.cookies.delete(name);
         },
-      },
+      }
     }
-  )
+  );
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  // Rutas públicas
-  const isPublic = req.nextUrl.pathname.startsWith('/signin') ||
-                   req.nextUrl.pathname.startsWith('/register')
-
-  // Si no es pública, es protegida
-  const isProtected = !isPublic
-
-  if (isProtected && !user) {
-    return NextResponse.redirect(new URL('/signin', req.url))
+  if (!user) {
+    return NextResponse.redirect(new URL("/signin", req.url));
   }
 
-  // Redirigir si entra a signin/register estando logged
-  if (isPublic && user) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
+  // Validación de plan (solo rutas protegidas)
+  const isBillingRoute = pathname.startsWith("/billing");
 
-  // Verificar plan si está logueado y la ruta no es /billing
-  if (user && isProtected && req.nextUrl.pathname !== '/billing') {
+  if (!isBillingRoute) {
     const { data: profile } = await supabase
-      .from('users_mirror')
-      .select('plan')
-      .eq('id', user.id)
-      .single()
+      .from("users_mirror")
+      .select("plan")
+      .eq("id", user.id)
+      .single();
 
     if (!profile?.plan) {
-      return NextResponse.redirect(new URL('/billing', req.url))
+      return NextResponse.redirect(new URL("/billing", req.url));
     }
   }
 
-  return res
+  return res;
 }
 
 export const config = {
-  matcher: ['/((?!_next|.*\\..*).*)'],
-}
+  matcher: ["/((?!_next|.*\\..*).*)"],
+};
