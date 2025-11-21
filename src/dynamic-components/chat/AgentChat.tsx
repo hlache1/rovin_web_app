@@ -96,7 +96,7 @@ export default function AgentChat() {
       {/* input + botón */}
       <div className="mt-2 flex gap-2">
         <input
-          className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+          className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 dark:text-gray-300 bg-transparent px-3 py-2 text-sm"
           placeholder="Escribe un mensaje..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
