@@ -24,7 +24,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     if (currentPage !== 1) setCurrentPage(1);
-  }, [debouncedSearch, currentPage]);
+  }, [debouncedSearch]);
 
   const columns = [
     {
