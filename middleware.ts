@@ -9,9 +9,11 @@ export async function middleware(req: NextRequest) {
   const PUBLIC_API_ROUTES = [
     "/api/checkout",
     "/api/subscriptions/confirm",
+    "/api/products/bulk",
+    "/api/products",
   ];
 
-  if (PUBLIC_API_ROUTES.includes(pathname)) {
+  if (PUBLIC_API_ROUTES.some((route) => pathname.startsWith(route))) {
     return res;
   }
 
@@ -52,9 +54,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
-  // Validación de plan (solo rutas protegidas)
   const isBillingRoute = pathname.startsWith("/billing");
-
   if (!isBillingRoute) {
     const { data: profile } = await supabase
       .from("users_mirror")
