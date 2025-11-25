@@ -54,7 +54,7 @@ export default function AgentForm() {
 
     const { error } = await supabase.from("user_settings").upsert(payload, { onConflict: "user_id" });
 
-    if (error) console.error(error);
+    if (error) alert("Error guardando configuración");
     
     alert("Configuración guardada");
   };
@@ -90,6 +90,40 @@ export default function AgentForm() {
 
     setFiles(prev => [...prev, ...uploadedUrls]);
   }
+
+  const handleDeleteFile = async (fileUrl: string) => {
+    const { data: auth } = await supabase.auth.getUser();
+    const user = auth?.user;
+    if (!user) return;
+  
+    const urlParts = fileUrl.split("/user-context-files/");
+    const filePath = urlParts[1];
+  
+    const { error: storageErr } = await supabase.storage
+      .from("user-context-files")
+      .remove([filePath]);
+  
+    if (storageErr) {
+      alert("Error eliminando archivo");
+      return;
+    }
+  
+    const updatedFiles = files.filter(f => f !== fileUrl);
+    setFiles(updatedFiles);
+  
+    const payload = {
+      user_id: user.id,
+      custom_prompt: prompt || null,
+      extra_context: context || null,
+      files: updatedFiles.length > 0 ? updatedFiles : null,
+    };
+  
+    const { error } = await supabase
+      .from("user_settings")
+      .upsert(payload, { onConflict: "user_id" });
+  
+    if (error) alert("Error eliminando archivo");
+  };
 
 
   if (loading) return <p className="p-4">Cargando...</p>;
@@ -146,12 +180,19 @@ export default function AgentForm() {
         <p className="mt-1 ml-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">PDF, DOC, DOCX</p>
         
         {files.length > 0 && (
-          <ul className="mt-2">
+          <ul className="mt-4 space-y-2">
             {files.map((url, i) => (
-              <li key={i}>
+              <li key={i} className="grid grid-cols-2 max-w-4/5">
                 <a href={url} target="_blank" className="text-blue-600 underline">
                   {url.split("/").pop()}
                 </a>
+
+                <button
+                  onClick={() => handleDeleteFile(url)}
+                  className="text-red-500 hover:text-red-700 text-sm"
+                >
+                  Eliminar
+                </button>
               </li>
             ))}
           </ul>
