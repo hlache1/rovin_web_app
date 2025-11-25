@@ -1,5 +1,6 @@
 "use client";
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
+// import { MetaButton } from "@/components/common/MetaButton";
 // import { WhatsappButton } from "@/components/common/WhatsappButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
@@ -164,15 +165,12 @@ const AppHeader: React.FC = () => {
           } items-center justify-between w-full gap-4 px-5 py-4 xl:flex shadow-theme-md xl:justify-end xl:px-0 xl:shadow-none`}
         >
           <div className="flex items-center gap-2 2xsm:gap-3">
-            {/* <WhatsappButton /> */}
-
+            {/* <MetaButton />
+            <WhatsappButton /> */}
             <ThemeToggleButton />
-            {/* <!-- Dark Mode Toggler --> */}
-
             <NotificationDropdown />
-            {/* <!-- Notification Menu Area --> */}
           </div>
-          {/* <!-- User Area --> */}
+
           <UserDropdown />
         </div>
       </div>

@@ -1,12 +1,72 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
+import Image from "next/image";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
-// import WhatsAppConnect from "@/dynamic-components/integration/WhatsappConnect";
 
 export const WhatsappButton: React.FC = () => {
   const { isOpen, openModal, closeModal } = useModal();
+  const [qr, setQr] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"connected" | "awaiting" | "expired" | "error" | null>(null);
+
+  const WHAPI_TOKEN = "TEST";
+
+  const fetchLoginStatus = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("https://gate.whapi.cloud/users/login?wakeup=true", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${WHAPI_TOKEN}`,
+        },
+      });
+
+      if (res.status === 409) {
+        setStatus("connected");
+        setQr(null);
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.base64) {
+        setStatus("awaiting");
+        setQr(data.base64);
+        return;
+      }
+
+      if (data.status === "expired") {
+        setStatus("expired");
+        setQr(null);
+        return;
+      }
+
+      setStatus("error");
+    } catch {
+      setStatus("error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchLoginStatus();
+  }, [isOpen]);
+
+
+  useEffect(() => {
+    if (status !== "expired") return;
+
+    const timer = setTimeout(() => {
+      fetchLoginStatus();
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [status]);
 
   return (
     <>
@@ -44,22 +104,47 @@ export const WhatsappButton: React.FC = () => {
     </button>
 
     <Modal isOpen={isOpen} onClose={closeModal} className="max-w-lg mx-auto">
-    <div className="grid grid-cols-[40%_60%] p-3">
-      <div className="h-60 overflow-hidden rounded-2xl"> 
-        {/* <img
-          src="https://images.unsplash.com/photo-1636751364472-12bfad09b451?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1740"
-          alt="WhatsApp Logo"
-          className="w-full h-full object-cover opacity-90"
-        /> */}
+      <div className="grid p-1 text-center">
+        <div className="p-4 mt-3">
+          <h2 className="text-md font-bold text-gray-600 text-lg dark:text-white/90">
+            Conecta tu WhatsApp
+          </h2>
+        </div>
       </div>
-      <div className="p-4">
-        <h2 className="mb-4 text-md font-medium dark:text-white/90">Conecta tu WhatsApp</h2>
+
+      <div className="p-5 flex justify-center">
+        {loading && <p className="dark:text-gray-300">Cargando QR...</p>}
+
+        {!loading && status === "connected" && (
+          <div className="p-6 text-center">
+            <p className="text-green-600 dark:text-green-400 text-lg font-medium">
+              Ya estás conectado a WhatsApp 🎉
+            </p>
+          </div>
+        )}
+
+        {!loading && qr && status === "awaiting" && (
+          <Image
+            src={qr}
+            alt="QR WhatsApp"
+            width={256}
+            height={256}
+            className="w-64 h-64 rounded-lg shadow-md"
+          />
+        )}
+
+        {!loading && status === "expired" && (
+          <p className="text-center text-red-500 dark:text-red-400">
+            QR expirado, generando uno nuevo...
+          </p>
+        )}
+
+        {!loading && status === "error" && (
+          <p className="text-center text-red-400">
+            Error al obtener el estado. Intenta de nuevo más tarde.
+          </p>
+        )}
       </div>
-    </div>
-      {/* <div className="p-6 text-center">
-        <h2 className="mb-4 text-lg font-semibold dark:text-white/90">Conecta tu WhatsApp</h2>
-        <WhatsAppConnect />
-      </div> */}
     </Modal>
     </>
   );
