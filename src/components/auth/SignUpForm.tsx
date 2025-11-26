@@ -18,6 +18,28 @@ export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  async function handleWhatsappSession(email: string) {
+    try {
+      const resp = await fetch("/api/whatsapp/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      if (!resp.ok) {
+        const { error } = await resp.json();
+        throw new Error(error || "Error en sesión de WhatsApp");
+      }
+  
+      const data = await resp.json();
+      return data;
+    } catch (err) {
+      console.error("Error en WhatsApp:", err);
+    }
+  }
+
   async function handleGoogleSignUp() {
     try {
       setLoading(true);
@@ -44,7 +66,7 @@ export default function SignUpForm() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signUp({
+    const {data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -55,12 +77,15 @@ export default function SignUpForm() {
       },
     });
 
-    setLoading(false);
 
     if (error) {
       setError(error.message);
       return;
     }
+
+    await handleWhatsappSession(data.user?.email || '');
+    setLoading(false);
+
     router.push("/dashboard");
   }
 

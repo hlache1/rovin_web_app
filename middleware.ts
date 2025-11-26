@@ -11,6 +11,7 @@ export async function middleware(req: NextRequest) {
     "/api/subscriptions/confirm",
     "/api/products/bulk",
     "/api/products",
+    "/api/whatsapp/session",
   ];
 
   if (PUBLIC_API_ROUTES.some((route) => pathname.startsWith(route))) {
@@ -22,6 +23,7 @@ export async function middleware(req: NextRequest) {
     "/register",
     "/success", 
     "/privacy-policy",
+    "/auth/callback",
   ];
 
   if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
