@@ -21,6 +21,7 @@ export async function middleware(req: NextRequest) {
     "/signin",
     "/register",
     "/success", 
+    "/privacy-policy",
   ];
 
   if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
