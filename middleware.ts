@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
     "/api/subscriptions/confirm",
     "/api/products/bulk",
     "/api/products",
-    "/api/whatsapp/session",
+    "/api/whatsapp",
   ];
 
   if (PUBLIC_API_ROUTES.some((route) => pathname.startsWith(route))) {

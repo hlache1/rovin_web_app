@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useWhatsappSession } from "@/hooks/useWhatsappSession";
 
 import Image from "next/image";
 import { useModal } from "@/hooks/useModal";
@@ -7,71 +8,22 @@ import { Modal } from "@/components/ui/modal";
 
 export const WhatsappButton: React.FC = () => {
   const { isOpen, openModal, closeModal } = useModal();
-  const [qr, setQr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"connected" | "awaiting" | "expired" | "error" | null>(null);
+  const { status, qr, loading, startPolling, stopPolling } = useWhatsappSession(); 
 
-  const WHAPI_TOKEN = "TEST";
-
-  const fetchLoginStatus = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch("https://gate.whapi.cloud/users/login?wakeup=true", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${WHAPI_TOKEN}`,
-        },
-      });
-
-      if (res.status === 409) {
-        setStatus("connected");
-        setQr(null);
-        return;
-      }
-
-      const data = await res.json();
-
-      if (data.base64) {
-        setStatus("awaiting");
-        setQr(data.base64);
-        return;
-      }
-
-      if (data.status === "expired") {
-        setStatus("expired");
-        setQr(null);
-        return;
-      }
-
-      setStatus("error");
-    } catch {
-      setStatus("error");
-    } finally {
-      setLoading(false);
-    }
+  const handleOpen = () => {
+    openModal();
+    startPolling();
   };
 
-  useEffect(() => {
-    if (!isOpen) return;
-    fetchLoginStatus();
-  }, [isOpen]);
-
-
-  useEffect(() => {
-    if (status !== "expired") return;
-
-    const timer = setTimeout(() => {
-      fetchLoginStatus();
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [status]);
+  const handleClose = () => {
+    stopPolling();
+    closeModal();
+  };
 
   return (
     <>
     <button
-      onClick={openModal}
+      onClick={handleOpen}
       className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
     >
       <svg
@@ -103,7 +55,7 @@ export const WhatsappButton: React.FC = () => {
       </svg>
     </button>
 
-    <Modal isOpen={isOpen} onClose={closeModal} className="max-w-lg mx-auto">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-lg mx-auto">
       <div className="grid p-1 text-center">
         <div className="p-4 mt-3">
           <h2 className="text-md font-bold text-gray-600 text-lg dark:text-white/90">
@@ -115,34 +67,27 @@ export const WhatsappButton: React.FC = () => {
       <div className="p-5 flex justify-center">
         {loading && <p className="dark:text-gray-300">Cargando QR...</p>}
 
-        {!loading && status === "connected" && (
-          <div className="p-6 text-center">
-            <p className="text-green-600 dark:text-green-400 text-lg font-medium">
-              Ya estás conectado a WhatsApp 🎉
-            </p>
+        {status === "WORKING" && (
+          <p className="text-green-500 font-semibold">
+            ✔ WhatsApp conectado correctamente
+          </p>
+        )}
+
+        {status === "SCAN_QR_CODE" && qr && (
+          <div>
+            <Image
+            src={qr}
+            width={180}
+            height={180}
+            alt="WhatsApp QR Code"
+          />
           </div>
         )}
 
-        {!loading && qr && status === "awaiting" && (
-          <Image
-            src={qr}
-            alt="QR WhatsApp"
-            width={256}
-            height={256}
-            className="w-64 h-64 rounded-lg shadow-md"
-          />
-        )}
+        {status === "STARTING" && <p>Iniciando sesión…</p>}
 
-        {!loading && status === "expired" && (
-          <p className="text-center text-red-500 dark:text-red-400">
-            QR expirado, generando uno nuevo...
-          </p>
-        )}
-
-        {!loading && status === "error" && (
-          <p className="text-center text-red-400">
-            Error al obtener el estado. Intenta de nuevo más tarde.
-          </p>
+        {status === "FAILED" && (
+          <p className="text-red-500">Error al iniciar sesión</p>
         )}
       </div>
     </Modal>
