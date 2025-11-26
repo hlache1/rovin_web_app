@@ -8,26 +8,30 @@ export async function POST(req: Request) {
       throw new Error(`'to' debe ser un array de números.`);
     }
 
-    const url = `https://graph.facebook.com/${process.env.META_API_VERSION}/${process.env.META_PHONE_NUMBER_ID}/messages`;
+    const url = `${process.env.WHATSAPP_API_URL}/api/sendText`;
 
     const tasks = to.map(async (number) => {
       const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.META_ACCESS_TOKEN}`,
+          "X-Api-Key": process.env.WAHA_API_KEY!,
+          Accept: "application/json",
         },
         body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: number,
-          type: "text",
-          text: { body: content },
+          chatId: String(number),
+          reply_to: null,
+          text: content,
+          linkPreview: true,
+          linkPreviewHighQuality: false,
+          session: "default",
         }),
       });
 
       return {
         number,
         ok: res.ok,
+        status: res.status,
         response: await res.json(),
       };
     });
