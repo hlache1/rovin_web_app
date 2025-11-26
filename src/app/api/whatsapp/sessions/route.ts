@@ -16,7 +16,8 @@ export async function POST(req: Request) {
     }
 
     const whatsappApiUrl = process.env.WHATSAPP_API_URL || "http://localhost:3000";
-    const sessionName = email.replace(/[^a-zA-Z0-9]/g, "_");
+    const sessionName = "default"
+    // email.replace(/[^a-zA-Z0-9]/g, "_");
 
     // Check if session exists
     const checkResp = await fetch(

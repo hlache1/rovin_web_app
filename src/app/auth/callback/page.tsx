@@ -9,7 +9,7 @@ export default function AuthCallback() {
 
   async function handleWhatsappSession(email: string) {
     try {
-      const resp = await fetch("/api/whatsapp/session", {
+      const resp = await fetch("/api/whatsapp/sessions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
