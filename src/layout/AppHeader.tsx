@@ -166,7 +166,7 @@ const AppHeader: React.FC = () => {
         >
           <div className="flex items-center gap-2 2xsm:gap-3">
             {/* <MetaButton /> */}
-            <WhatsappButton /> 
+            {/* <WhatsappButton />  */}
             <ThemeToggleButton />
             <NotificationDropdown />
           </div>
