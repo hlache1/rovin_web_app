@@ -70,7 +70,7 @@ export default function SignInForm() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return setError(error.message)
 
-    await handleWhatsappSession(data.user.email! || '')
+    // await handleWhatsappSession(data.user.email! || '')
 
     setLoading(false)
     router.replace(next)

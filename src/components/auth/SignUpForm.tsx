@@ -83,7 +83,7 @@ export default function SignUpForm() {
       return;
     }
 
-    await handleWhatsappSession(data.user?.email || '');
+    // await handleWhatsappSession(data.user?.email || '');
     setLoading(false);
 
     router.push("/dashboard");

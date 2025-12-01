@@ -28,8 +28,14 @@ export const MetaButton: React.FC = () => {
           typeof event.data === 'string' ? JSON.parse(event.data) : event.data
         if (data?.type === 'WA_EMBEDDED_SIGNUP') {
           if (data.event === 'FINISH') console.log('✔ FINISH:', data.data)
+          else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
+            console.log('✔ FINISH:', data.data)
+          }
           else if (data.event === 'CANCEL') console.warn('⚠ CANCEL:', data.data)
-          else if (data.event === 'ERROR') console.error('❌ ERROR:', data.data)
+          else if (data.event === 'ERROR') {
+            console.error('❌ ERROR:', data.data)
+            console.log(data)
+          }
         }
       } catch {
         console.log('Non JSON Response:', event.data)
@@ -91,7 +97,11 @@ export const MetaButton: React.FC = () => {
       config_id: CONFIG_ID,
       response_type: 'code',
       override_default_response_type: true,
-      extras: { version: 'v3' },
+      extras: {
+        setup: {},
+        featureType: "whatsapp_business_app_onboarding",
+        sessionInfoVersion: "3",
+      },
     })
   }
 

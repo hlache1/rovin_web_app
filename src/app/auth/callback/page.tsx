@@ -32,7 +32,7 @@ export default function AuthCallback() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session) {
-        await handleWhatsappSession(data.session.user.email! || '');
+        // await handleWhatsappSession(data.session.user.email! || '');
         router.replace("/dashboard");
       }
       else router.replace("/signin");
