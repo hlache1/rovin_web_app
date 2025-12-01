@@ -80,7 +80,7 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Apeelido(s)
+                Apellido(s)
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {lastNameValue}
@@ -102,6 +102,24 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {phoneValue}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Organización
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                N/A
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Rol
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                N/A
               </p>
             </div>
 
