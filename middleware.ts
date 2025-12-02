@@ -70,6 +70,36 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Load user settings
+  const { data: settings } = await supabase
+    .from("user_settings")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (settings) {
+    res.cookies.set("catalog_id", settings.catalog_id ?? "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.cookies.set("phone_number_id", settings.phone_number_id ?? "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.cookies.set("business_id", settings.business_id ?? "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+  }
+
   return res;
 }
 

@@ -1,11 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 
 export async function POST(req: Request) {
     try {
+      const cookieStore = await cookies();
+
       const META_TOKEN = process.env.META_ACCESS_TOKEN!;
-      const META_CATALOG_ID = process.env.META_CATALOG_ID!;
+      const META_CATALOG_ID = cookieStore.get("catalog_id")?.value;
       const META_API_VERSION = process.env.META_API_VERSION || "v22.0";
+
+      if (!META_CATALOG_ID) {
+        return Response.json(
+          { error: "Missing user catalog ID" },
+          { status: 400 }
+        );
+      }
 
       const supabase = await createClient();
       const formData = await req.formData();
@@ -64,7 +74,6 @@ export async function POST(req: Request) {
       const metaJson = await metaResp.json();
   
       if (!metaResp.ok || !metaJson.id) {
-        console.error("Meta API error:", metaJson);
         throw new Error(metaJson.error?.message || "Error en Meta");
       }
   

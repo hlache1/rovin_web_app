@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
     try {
+      const cookieStore = await cookies();
+      const phoneNumberId = cookieStore.get("phone_number_id")?.value;
+      
+      if (!phoneNumberId) {
+        return NextResponse.json({ error: "Missing phone number ID" }, { status: 400 } );
+      }
+
       const { to, content } = await req.json();
-      const url = `https://graph.facebook.com/${process.env.META_API_VERSION}/${process.env.META_PHONE_NUMBER_ID}/messages`;
+      const url = `https://graph.facebook.com/${process.env.META_API_VERSION}/${phoneNumberId}/messages`;
   
       const response = await fetch(url, {
         method: "POST",
@@ -21,7 +29,7 @@ export async function POST(req: Request) {
   
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(`MessageBird error: ${text}`);
+        throw new Error(`Meta error: ${text}`);
       }
   
       return NextResponse.json({ success: true });
