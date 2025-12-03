@@ -71,6 +71,7 @@ export function useUser() {
         if (profileError) throw profileError;
         if (mounted) setProfile(profileData);
 
+        // TODO: Include organization data
         // organization (user_organizations + organizations)
         // const { data: orgData, error: orgError } = await supabase
         //   .from("user_organizations")

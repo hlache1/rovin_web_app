@@ -4,6 +4,7 @@ import React from "react";
 import { useUser } from "@/hooks/useUser";
 import UserInfoCard from "@/components/user-profile/UserInfoCard";
 import UserMetaCard from "@/components/user-profile/UserMetaCard";
+import OrganizationInfoCard from "@/components/user-profile/OrganizationInfoCard";
 
 
 export default function ProfilePage() {
@@ -30,6 +31,14 @@ export default function ProfilePage() {
             phone={profile?.phone || ""}
             email={user?.email || ""}
           />
+          {profile?.organization && (
+            <OrganizationInfoCard 
+              user_id={user?.id || ""}
+              organization_id={profile.organization.id}
+              name={profile.organization.name || ""}
+              role={profile.organization.role || ""}
+            />
+          )}
         </div>
       </div>
     </div>

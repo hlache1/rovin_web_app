@@ -1,57 +1,49 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useUpdateOrganization } from "@/hooks/useUpdateOrganization";
 import { useModal } from "../../hooks/useModal";
-import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import Select from "../form/Select";
 
-class UserProps {
-  id: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string | null;
+class OrganizationProps {
+  user_id: string;
+  organization_id: string;
+  name: string;
+  role: string;
 
-  constructor(id: string, first_name: string, last_name: string, phone: string, email: string | null) {
-    this.id = id;
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.phone = phone;
-    this.email = email;
+  constructor(user_id: string, organization_id: string, name: string, role: string) {
+    this.user_id = user_id;
+    this.organization_id = organization_id;
+    this.name = name;
+    this.role = role;
   }
 }
 
-export default function UserInfoCard({ id, first_name, last_name, phone, email }: UserProps) {
+export default function OrganizationInfoCard({ user_id, organization_id, name, role }: OrganizationProps) {
   const { isOpen, openModal, closeModal } = useModal();
-  const { updateProfile, loading, success, error } = useUpdateProfile();
+  const { updateOrganizationData, loading, success, error } = useUpdateOrganization();
 
-  const [firstNameValue, setFirstName] = useState(first_name || "");
-  const [lastNameValue, setLastName] = useState(last_name || "");
-  const [emailValue, setEmail] = useState(email || "");
-  const [phoneValue, setPhone] = useState(phone || "");
-  const [countryCode, setCountryCode] = useState("+52");
+  const [nameValue, setName] = useState(name || "");
+  const [roleValue, setRole] = useState(role || "");
+
 
   useEffect(() => {
-    setFirstName(first_name || "");
-    setLastName(last_name || "");
-    setEmail(email || "");
-    setPhone(phone || "");
-  }, [first_name, last_name, email, phone]);
+    setName(name || "");
+    setRole(role || "");
+  }, [name, role]);
 
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    const formattedPhone = `${countryCode.slice(1)}1${phoneValue}`;
 
-    await updateProfile(id, {
-      first_name: firstNameValue,
-      last_name: lastNameValue,
-      email: emailValue,
-      phone: formattedPhone,
-    });
+    await updateOrganizationData(
+      user_id,
+      organization_id,
+      nameValue,
+      roleValue
+    )
 
     if (success) {
       alert("Perfil actualizado correctamente ✅");
@@ -65,43 +57,25 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-            Información del usuario
+            Información de la organización
           </h4>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Nombre
+                Organización
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {firstNameValue}
+                N/A
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Apellido(s)
+                Rol
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {lastNameValue}
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Email
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {emailValue}
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Número telefonico
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {phoneValue}
+                N/A
               </p>
             </div>
           </div>
@@ -137,49 +111,25 @@ export default function UserInfoCard({ id, first_name, last_name, phone, email }
               Edit pefil
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Actualiza tu información personal aquí.
+              Actualiza la información de la organización.
             </p>
           </div>
           <form onSubmit={handleSave} className="flex flex-col">
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div className="mt-5">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Información personal
+                  Organización
                 </h5>
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nombre</Label>
-                    <Input type="text" defaultValue={firstNameValue} onChange={(e) => setFirstName(e.target.value)}/>
+                    <Input type="text" defaultValue={nameValue} onChange={(e) => setName(e.target.value)}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Apellido(s)</Label>
-                    <Input type="text" defaultValue={lastNameValue} onChange={(e) => setLastName(e.target.value)} />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email</Label>
-                    <Input type="text" defaultValue={emailValue} onChange={(e) => setEmail(e.target.value)} />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Número telefonico</Label>
-                    <div className="flex gap-1">
-                     <div className="basis-2/5">
-                      <Select
-                        onChange={(e) => setCountryCode(e)}
-                        defaultValue={countryCode}
-                        placeholder="País"
-                        options={
-                          [
-                            { value: "+52", label: "🇲🇽 (+52)" },
-                          ]
-                        }
-                        />
-                     </div>
-                    <Input className="basis-3/5" type="text" defaultValue={phoneValue} onChange={(e) => setPhone(e.target.value)} />
-                    </div>
+                    <Label>Rol</Label>
+                    <Input type="text" defaultValue={roleValue} onChange={(e) => setRole(e.target.value)} />
                   </div>
 
                 </div>
