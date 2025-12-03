@@ -98,6 +98,13 @@ export async function middleware(req: NextRequest) {
       sameSite: "lax",
       path: "/",
     });
+
+    res.cookies.set("meta_token", settings.meta_token ?? "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
   }
 
   return res;

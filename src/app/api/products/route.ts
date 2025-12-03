@@ -6,9 +6,16 @@ export async function POST(req: Request) {
     try {
       const cookieStore = await cookies();
 
-      const META_TOKEN = process.env.META_ACCESS_TOKEN!;
+      const META_TOKEN = cookieStore.get("meta_token")?.value;
       const META_CATALOG_ID = cookieStore.get("catalog_id")?.value;
       const META_API_VERSION = process.env.META_API_VERSION || "v22.0";
+
+      if (!META_TOKEN) {
+        return Response.json(
+          { error: "Missing Meta access token" },
+          { status: 400 }
+        );
+      }
 
       if (!META_CATALOG_ID) {
         return Response.json(

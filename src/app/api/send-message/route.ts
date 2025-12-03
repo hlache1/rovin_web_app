@@ -5,6 +5,11 @@ export async function POST(req: Request) {
     try {
       const cookieStore = await cookies();
       const phoneNumberId = cookieStore.get("phone_number_id")?.value;
+      const metaToken = cookieStore.get("meta_token")?.value;
+
+      if (!metaToken) {
+        return NextResponse.json({ error: "Missing Meta access token" }, { status: 400 } );
+      }
       
       if (!phoneNumberId) {
         return NextResponse.json({ error: "Missing phone number ID" }, { status: 400 } );
@@ -17,7 +22,7 @@ export async function POST(req: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.META_ACCESS_TOKEN}`,
+          "Authorization": `Bearer ${metaToken}`,
         },
         body: JSON.stringify({
           messaging_product: "whatsapp",
