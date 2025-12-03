@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Script from 'next/script'
 import { useModal } from '@/hooks/useModal'
 import { Modal } from '@/components/ui/modal'
+import { supabase } from '@/lib/supabase/client'
 
 export const MetaButton: React.FC = () => {
   const [fbReady, setFbReady] = useState(false)
@@ -17,25 +18,20 @@ export const MetaButton: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const handler = (event: MessageEvent) => {
+    const handler = async (event: MessageEvent) => {
       if (
         event.origin !== 'https://www.facebook.com' &&
         event.origin !== 'https://web.facebook.com'
-      )
-        return
+      ) { return }
+      
       try {
-        const data =
-          typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
         if (data?.type === 'WA_EMBEDDED_SIGNUP') {
-          if (data.event === 'FINISH') console.log('✔ FINISH:', data.data)
-          else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
-            console.log('✔ FINISH:', data.data)
+          if (data.event === "FINISH" || data.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING") {
+            saveFBLoginResponse(data.data)
           }
           else if (data.event === 'CANCEL') console.warn('⚠ CANCEL:', data.data)
-          else if (data.event === 'ERROR') {
-            console.error('❌ ERROR:', data.data)
-            console.log(data)
-          }
+          else if (data.event === 'ERROR') console.error('❌ ERROR:', data.data)
         }
       } catch {
         console.log('Non JSON Response:', event.data)
@@ -54,12 +50,36 @@ export const MetaButton: React.FC = () => {
         appId: APP_ID,
         autoLogAppEvents: true,
         xfbml: true,
-        version: 'v20.0',
+        version: 'v24.0',
       })
 
       setFbReady(true)
     }
   }, [])
+
+  const saveFBLoginResponse = async (response: any) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const catalogId = response.catalog_ids[0] || null
+
+    const { error } = await supabase
+      .from("user_settings")
+      .upsert({
+        user_id: user.id,
+        phone_number_id: response.phone_number_id,
+        business_id: response.business_id,
+        catalog_id: catalogId
+      },
+      { onConflict: 'user_id' }
+    )
+    .select()
+
+    if (error) {
+      console.error(error)
+      throw error
+    }
+  }
 
   const fbLoginHandler = (response: any) => {
     void (async () => {
@@ -71,11 +91,11 @@ export const MetaButton: React.FC = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               code,
-              redirectUri: `${window.location.origin}/meta-auth`,
             }),
           })
           const data = await res.json()
-          console.log('Token recibido del backend:', data)
+
+          if (data) alert('✅ Cuenta Meta conectada exitosamente.')
         } catch (err) {
           console.error('Error enviando code al backend:', err)
         }

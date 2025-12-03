@@ -7,8 +7,7 @@ export default function MetaAuthPage() {
     const code = url.searchParams.get("code");
 
     if (code) {
-      const redirectUri = `${window.location.origin}/meta-auth`;
-
+      const redirectUri = `${window.location.origin}/meta-auth/`;
       fetch("/api/meta/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

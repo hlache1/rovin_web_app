@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
     const { code } = await req.json();
+    const supabase = await createClient();
 
     if (!code) {
       return NextResponse.json(
@@ -11,39 +13,58 @@ export async function POST(req: Request) {
       );
     }
 
-    const clientId = process.env.META_APP_ID!;
+    const clientId = process.env.NEXT_PUBLIC_META_APP_ID!;
     const clientSecret = process.env.META_APP_SECRET!;
     
-    const redirect_url = "https://localhost:8080/meta-auth"
-
-    const tokenUrl = `https://graph.facebook.com/v20.0/oauth/access_token?` +
-      `client_id=${clientId}` +
-      `&redirect_uri=${encodeURIComponent(redirect_url)}` +
-      `&client_secret=${clientSecret}` +
-      `&code=${code}`;
-
-    const tokenRes = await fetch(tokenUrl, { method: "GET" });
+    const tokenRes = await fetch(
+      "https://graph.facebook.com/v22.0/oauth/access_token",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          grant_type: "authorization_code",
+        }),
+      }
+    );
     const tokenData = await tokenRes.json();
 
     if (!tokenRes.ok) {
-      console.error("Token exchange error", tokenData);
       return NextResponse.json(
         { error: "Error exchanging code", details: tokenData },
         { status: 500 }
       );
     }
 
-    // tokenData = { access_token, token_type, expires_in }
-    console.log("Token data:", tokenData);
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-    // TODO: Check data and save to DB
+    const { error } = await supabase
+      .from("user_settings")
+      .upsert({
+        user_id: user.id,
+        meta_token: tokenData.access_token,
+      },
+      { onConflict: 'user_id' }
+    )
+    .select()
+
+    if (error) {
+      return NextResponse.json(
+        { error: "Database error", details: error.message },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       access_token: tokenData.access_token,
-      expires_in: tokenData.expires_in,
+      token_type: tokenData.token_type,
     });
-  } catch (error: any) {
-    console.error("Backend auth error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
